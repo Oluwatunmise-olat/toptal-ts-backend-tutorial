@@ -19,7 +19,7 @@ class UsersController {
     res.status(201).send({ id: userId });
   }
 
-  async patch(req: express.Request, res: express.Response) {
+  async partialUpdate(req: express.Request, res: express.Response) {
     if (req.body.password) {
       req.body.password = await argon2.hash(req.body.password);
     }
@@ -27,7 +27,7 @@ class UsersController {
     res.status(204).send();
   }
 
-  async put(req: express.Request, res: express.Response) {
+  async fullUpdate(req: express.Request, res: express.Response) {
     req.body.password = await argon2.hash(req.body.password);
     await usersService.putById(req.body.id, req.body);
     res.status(204).send();

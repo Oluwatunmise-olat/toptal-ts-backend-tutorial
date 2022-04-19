@@ -1,5 +1,7 @@
 import express from "express";
 import { CommonRouteConfig } from "../common/common.routes";
+import usersController from "./users.controller";
+import usersMiddleware from "./users.middleware";
 
 export class UserRouteConfig extends CommonRouteConfig {
   constructor(public app: express.Application) {
@@ -9,36 +11,25 @@ export class UserRouteConfig extends CommonRouteConfig {
   public configureRoutes(): express.Application {
     this.app
       .route("/users")
-      .get((req: express.Request, res: express.Response) => {
-        res.status(200).send("Users List");
-      })
-      .post((req: express.Request, res: express.Response) => {
-        res.status(201).send("Create Users Post");
-      });
+      .get(usersController.listUsers)
+      .post(
+        usersMiddleware.validateRequiredUserBodyFields,
+        usersMiddleware.validateUniqueEmail,
+        usersController.createUser
+      );
+
+    this.app.param("userId", usersMiddleware.setUserId);
 
     this.app
       .route("/users/:userId")
-      .all(
-        (
-          req: express.Request,
-          res: express.Response,
-          next: express.NextFunction
-        ) => {
-          return next();
-        }
+      .get(usersController.getUserById)
+      .put(
+        usersMiddleware.validateRequiredUserBodyFields,
+        usersMiddleware.validateIsAuthorized,
+        usersController.fullUpdate
       )
-      .get((req: express.Request, res: express.Response) => {
-        res.status(200).send("Get requested resource");
-      })
-      .put((req: express.Request, res: express.Response) => {
-        res.status(200).send("Put method for requested resource");
-      })
-      .patch((req: express.Request, res: express.Response) => {
-        res.status(200).send("Patch method for requested resource");
-      })
-      .delete((req: express.Request, res: express.Response) => {
-        res.status(200).send("Delete method for requested resource");
-      });
+      .patch(usersController.partialUpdate)
+      .delete(usersController.removeUser);
     return this.app;
   }
 }
