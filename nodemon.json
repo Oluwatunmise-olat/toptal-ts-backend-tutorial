@@ -1,0 +1,5 @@
+{
+    "ext": "ts",
+    "watch": ["/users", "app.ts"],
+    "exec": "ts-node ./app.ts"
+}

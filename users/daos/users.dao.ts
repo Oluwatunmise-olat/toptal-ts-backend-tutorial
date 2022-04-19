@@ -18,7 +18,7 @@ class UsersDao {
   }
 
   async getUserById(userId: string): Promise<CreateUserDto | undefined> {
-    return this.users.find(({ id }) => id == userId);
+    return this.users.find((user) => user.id == userId);
   }
 
   async putUserById(userId: string, user: PutUserDto) {
