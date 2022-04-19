@@ -4,6 +4,7 @@ import http from "http";
 import cors from "cors";
 import * as expressWinston from "express-winston";
 import winston from "winston";
+import morgan from "morgan";
 
 import { UserRouteConfig } from "./users/users.routes";
 import debug from "debug";
@@ -16,6 +17,7 @@ const routes: Array<CommonRouteConfig> = [];
 
 app.use([express.json(), express.urlencoded({ extended: false })]);
 app.use(cors());
+app.use(morgan("dev"))
 
 routes.push(new UserRouteConfig(app));
 
