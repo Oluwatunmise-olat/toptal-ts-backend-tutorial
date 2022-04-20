@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import http from "http";
 
@@ -17,7 +19,7 @@ const routes: Array<CommonRouteConfig> = [];
 
 app.use([express.json(), express.urlencoded({ extended: false })]);
 app.use(cors());
-app.use(morgan("dev"))
+app.use(morgan("dev"));
 
 routes.push(new UserRouteConfig(app));
 

@@ -35,7 +35,9 @@ class UsersDao {
     return this.User.findOne({ email: email }).exec();
   }
 
-  async getUserByEmailWithPassword(email: string) {
+  async getUserByEmailWithPassword(
+    email: string
+  ): Promise<CreateUserDto | null> {
     return this.User.findOne({ email: email })
       .select("_id email permissionFlags +password")
       .exec();
