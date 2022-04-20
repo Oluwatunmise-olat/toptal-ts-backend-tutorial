@@ -2,6 +2,8 @@ import express from "express";
 import { CommonRouteConfig } from "../common/common.routes";
 import usersController from "./users.controller";
 import usersMiddleware from "./users.middleware";
+import BodyValidationMiddleware from "../common/middleware/validation.middleware";
+import { body } from "express-validator";
 
 export class UserRouteConfig extends CommonRouteConfig {
   constructor(public app: express.Application) {
@@ -13,7 +15,12 @@ export class UserRouteConfig extends CommonRouteConfig {
       .route("/users")
       .get(usersController.listUsers)
       .post(
-        usersMiddleware.validateRequiredUserBodyFields,
+        body("email").isEmail(),
+        body("password")
+          .trim()
+          .isLength({ min: 5 })
+          .withMessage("Field 'email' is required with (5+ characters)"),
+        BodyValidationMiddleware.getBodyFieldErrors,
         usersMiddleware.validateUniqueEmail,
         usersController.createUser
       );
@@ -24,11 +31,29 @@ export class UserRouteConfig extends CommonRouteConfig {
       .route("/users/:userId")
       .get(usersController.getUserById)
       .put(
-        usersMiddleware.validateRequiredUserBodyFields,
+        body("email").isEmail(),
+        body("password")
+          .isLength({ min: 5 })
+          .withMessage("Field 'email' is required with (5+ characters)"),
+        body("firstName").isString(),
+        body("lastName").isString(),
+        body("permissionFlags").isInt(),
+        BodyValidationMiddleware.getBodyFieldErrors,
         usersMiddleware.validateIsAuthorized,
         usersController.fullUpdate
       )
-      .patch(usersController.partialUpdate)
+      .patch(
+        body("email").isEmail().optional(),
+        body("password")
+          .isLength({ min: 5 })
+          .withMessage("Field 'email' is required with (5+ characters)")
+          .optional(),
+        body("firstName").isString().optional(),
+        body("lastName").isString().optional(),
+        body("permissionFlags").isInt().optional(),
+        BodyValidationMiddleware.getBodyFieldErrors,
+        usersController.partialUpdate
+      )
       .delete(usersController.removeUser);
     return this.app;
   }

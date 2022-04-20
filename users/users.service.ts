@@ -4,7 +4,7 @@ import { CreateUserDto, PatchUserDto, PutUserDto } from "./dto";
 
 class UserService implements CRUD {
   async list(limit: number, page: number) {
-    return usersDao.getUsers();
+    return usersDao.getUsers(limit, page);
   }
   async create(resource: CreateUserDto) {
     return usersDao.create(resource);
@@ -13,13 +13,13 @@ class UserService implements CRUD {
     return usersDao.removeUserById(id);
   }
   async patchById(id: string, resource: PatchUserDto) {
-    return usersDao.patchUserById(id, resource);
+    return usersDao.updateUserById(id, resource);
   }
   async getById(id: string) {
     return usersDao.getUserById(id);
   }
   async putById(id: string, resource: PutUserDto) {
-    return usersDao.putUserById(id, resource);
+    return usersDao.updateUserById(id, resource);
   }
   async getUserByEmail(email: string) {
     return usersDao.getUserByEmail(email);
